@@ -16,6 +16,8 @@ if (argv.p || argv.patch) {
 } else if (argv.M || argv.Major) {
   level = 0;
 }
+
+
 // switch (argv.level) {
 //   case 'patch':
 //     level = 2;
@@ -34,16 +36,25 @@ const package = JSON.parse(readFileSync(process.cwd().replace(/\\/g, '/') + '/pa
 
 const arr = package.version.split(/[\.-]/g);
 
-for (let i = arr.length - 2; i >= 0; i--) {
-  if (level !== i) {
-    arr[i] = 0;
-  } else {
-    ++arr[i]
-    break;
+if(arr.length === 3) {
+  arr[3] = null;
+}
+if (argv.rc) {
+  let num = arr[arr.length - 1]? +arr[arr.length - 1].replace(/[a-zA-Z]/g, '') : 0;
+  arr[arr.length - 1] = 'rc' + (++num);
+} else {
+  for (let i = arr.length -2 ; i >= 0; i--) {
+    if (level !== i) {
+      arr[i] = 0;
+    } else {
+      ++arr[i]
+      break;
+    }
   }
 }
 
-exec(`yarn version --new-version ${arr[0]}.${arr[1]}.${arr[2]}${newStage ? '-' + newStage : ''}`, (error, stdout, stderr) => {
+const newVersion = argv.rc ? `${arr[0]}.${arr[1]}.${arr[2]}-${arr[3]}` : `${arr[0]}.${arr[1]}.${arr[2]}${newStage ? '-' + newStage : ''}`
+exec(`yarn version --new-version ${newVersion}`, (error, stdout, stderr) => {
   if (error) {
     console.log(error);
     return;
