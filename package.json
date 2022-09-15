@@ -1,0 +1,12 @@
+{
+  "name": "tagger_util",
+  "bin": {
+    "tag": "./bin/index.js"
+  },
+  "version": "0.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "yargs": "^17.5.1"
+  }
+}
